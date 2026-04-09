@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supermarket Sales Analysis Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content hero-layout">
+                <div class="hero-copy">
+
+                    <h1>Supermarket Sales Analysis Dashboard</h1>
+                    <p class="subtitle">Explore sales, ratings, payments, and city performance with a sleek interface built for fast decisions.</p>
+                    <div class="hero-badges" aria-label="Dashboard highlights">
+                        <span class="hero-badge">Live filters</span>
+                        <span class="hero-badge">Responsive charts</span>
+                        <span class="hero-badge">Data-driven insights</span>
+                    </div>
+                </div>
+                <div class="hero-panel" aria-hidden="true">
+                    <div class="hero-panel-top">
+                        <span class="hero-panel-label">Insight focus</span>
+                        <span class="hero-panel-chip">Sales + ratings</span>
+                    </div>
+                    <p class="hero-panel-title">A cleaner way to inspect performance.</p>
+                    <p class="hero-panel-text">Compare locations, spot strong product lines, and review customer behavior in one calm, high-contrast workspace.</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loadingSpinner" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading dashboard...</p>
+        </div>
+
+        <div id="dashboardContent" class="dashboard-content" style="display: none;">
+            <section class="summary-section">
+                <h2 class="section-title">Key Metrics</h2>
+                <div class="cards-grid">
+                    <div class="card metric-card">
+                        <div class="card-content">
+                            <p class="card-label">Total Sales</p>
+                            <p class="card-value" id="totalSales">₹0</p>
+                            <p class="metric-trend" id="totalSalesTrend"></p>
+                        </div>
+                    </div>
+
+                    <div class="card metric-card">
+                        <div class="card-content">
+                            <p class="card-label">Avg Sales</p>
+                            <p class="card-value" id="avgSales">₹0</p>
+                            <p class="metric-trend" id="avgSalesTrend"></p>
+                        </div>
+                    </div>
+
+                    <div class="card metric-card">
+                        <div class="card-content">
+                            <p class="card-label">Transactions</p>
+                            <p class="card-value" id="totalTransactions">0</p>
+                            <p class="metric-trend" id="totalTransactionsTrend"></p>
+                        </div>
+                    </div>
+
+                    <div class="card metric-card">
+                        <div class="card-content">
+                            <p class="card-label">Avg Rating</p>
+                            <p class="card-value" id="avgRating">0/10</p>
+                            <p class="metric-trend" id="avgRatingTrend"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="insights-box">
+                    <h3>Key Insights</h3>
+                    <div class="insights-content">
+                        <p><strong>Top City:</strong> <span id="topCity">-</span></p>
+                        <p><strong>Best Product:</strong> <span id="topProduct">-</span></p>
+                        <p><strong>Preferred Payment:</strong> <span id="paymentPreference">-</span></p>
+                        <p><strong>Customer Type:</strong> <span id="customerType">-</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="filters-section">
+                <h2 class="section-title">Filter and Search</h2>
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="cityFilter">City</label>
+                        <select id="cityFilter" class="filter-select">
+                            <option value="">All Cities</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="productFilter">Product Line</label>
+                        <select id="productFilter" class="filter-select">
+                            <option value="">All Products</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="searchBox">Search</label>
+                        <input type="text" id="searchBox" class="filter-input" placeholder="Search invoice, product, city...">
+                    </div>
+
+                    <button id="resetFilters" class="btn-reset">Reset Filters</button>
+                </div>
+            </section>
+
+            <section class="charts-section">
+                <h2 class="section-title">Data Visualization</h2>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Sales by City</h3>
+                        <canvas id="citySalesChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Payment Methods</h3>
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+
+                    <div class="chart-card full-width">
+                        <h3>Sales Trend Over Time</h3>
+                        <canvas id="trendChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Sales by Product Line</h3>
+                        <canvas id="productChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Customer Rating Distribution</h3>
+                        <canvas id="ratingChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Top Correlations</h3>
+                        <div class="correlation-info" id="correlationInfo"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="table-section">
+                <h2 class="section-title">Filtered Data Table</h2>
+                <div class="table-info">
+                    <p>Showing <span id="recordsCount">0</span> records</p>
+                </div>
+                <div class="table-wrapper">
+                    <table id="dataTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Invoice ID</th>
+                                <th>City</th>
+                                <th>Product</th>
+                                <th>Qty</th>
+                                <th>Sales</th>
+                                <th>Payment</th>
+                                <th>Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+                <div class="table-pagination">
+                    <button id="prevPage" class="btn-pagination">Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button id="nextPage" class="btn-pagination">Next</button>
+                </div>
+            </section>
+
+            <section class="statistics-section">
+                <h2 class="section-title">Detailed Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Sales Distribution</h4>
+                        <div class="stat-content" id="salesStats"></div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Customer Types</h4>
+                        <div class="stat-content" id="customerStats"></div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Top Metrics</h4>
+                        <div class="stat-content" id="topMetrics"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
